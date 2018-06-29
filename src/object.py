@@ -42,7 +42,7 @@ class Object(object):
 			results['album']     = parse_jsonp['malbum']
 			results['duration']  = parse_jsonp['minterval']
 			results['lyric']	 = self.songlyricResult(songid=songid)
-			results['mp3Url']    = mod.shortenGoogle(parse_jsonp['mp3Url'])
+			results['mp3Url']    = parse_jsonp['mp3Url']
 			results['m4aUrl']    = mod.shortenGoogle(parse_jsonp['m4aUrl'])
 			results['song']      = parse_jsonp['msong']
 			results['thumbnail'] = parse_jsonp['imgSrc']
