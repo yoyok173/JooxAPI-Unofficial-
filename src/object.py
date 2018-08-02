@@ -2,6 +2,9 @@ import requests,time
 import simplejson as json
 from server import Server
 from models import Models
+from bs4 import BeautifulSoup as bSoup
+import requests as uReq
+import json, lxml, re
 
 mod  = Models() 
 serv = Server()
@@ -9,6 +12,10 @@ class Object(object):
 
 	_time = str(time.time()).split(".")[0]
 
+    def getHtml(url, header):
+    	getUrl = uReq.get(url, headers = header)
+    	return bSoup(getUrl.content, "lxml")
+    
 	def searchResults(self, keywords):
 		apiURI      = "http://api.joox.com/web-fcgi-bin//web_search"
 		params      = {"callback":"jQuery110007680156477433364_1516238311941","lang":"en","country":"id","type":"0","search_input":keywords,"pn":1,"sin":"0","ein":"29","_":self._time}
@@ -49,3 +56,16 @@ class Object(object):
 			return results
 		except:
 			return parse_jsonp
+        
+    def googleimage(keywords):
+        header = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36"}
+        website = "https://www.google.co.in/search?q="+keywords+"&source=lnms&tbm=isch"
+        data = getHtml(website, header)
+        dataGoogle = []
+        for listAllJson in data.findAll("div", {"class":"rg_meta"}):
+        	getAllJson = json.loads(listAllJson.text)
+        	dataGoogle.append({"title": getAllJson["pt"], "source": getAllJson["ru"], "image": getAllJson["ou"]})
+        result = {
+        	"result": dataGoogle
+        }
+        return result
